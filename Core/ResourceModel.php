@@ -20,7 +20,6 @@ class ResourceModel implements ResourceModelInterface
 	public function save($model)
 	{
 		$arrModel = $model->getProperties();
-		
 		if($model->getId() == null){
 			unset($arrModel["id"]);
 			unset($arrModel["updated_at"]);
@@ -32,17 +31,20 @@ class ResourceModel implements ResourceModelInterface
 		}else {
 			unset($arrModel["created_at"]);
 			$arrKey = array_keys($arrModel);
+			unset($arrKey["id"]);
 
 			$strKey = implode(" , ",$arrKey);
 
 			$arrKeyValue = ":" . implode(" , :",$arrKey);
 			$str = "";
+			$sql = "";
 			foreach ($arrKey as $key => $value) {
-				$sql .= $value . " = :" . $value . ",";
+				$str .= $value . " = :" . $value . ",";			
 			}
-			$str = substr($sql,0,-1);
 
-			$sql = "UPDATE $this->table SET {$str} WHERE this->id = :id";
+			$str = substr($str,0,-1);
+			$sql = "";
+			$sql = "UPDATE $this->table SET {$str} WHERE id = :id";
 		}
 		$req = Database::getBdd()->prepare($sql);
 		return $req->execute($arrModel);
@@ -52,12 +54,11 @@ class ResourceModel implements ResourceModelInterface
 	{
 		$arrId = [];
 		$arrId['id'] = $model->getId();
-		var_dump($model->getId());
 		$sql = "DELETE FROM $this->table WHERE id = :id";
         $req = Database::getBdd()->prepare($sql);	
         return $req->execute($arrId);
 	}
-
+	
 	public function get($id = null)
 	{
 		if($id != null){
