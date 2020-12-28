@@ -31,19 +31,16 @@ class ResourceModel implements ResourceModelInterface
 		}else {
 			unset($arrModel["created_at"]);
 			$arrKey = array_keys($arrModel);
-			unset($arrKey["id"]);
 
 			$strKey = implode(" , ",$arrKey);
 
 			$arrKeyValue = ":" . implode(" , :",$arrKey);
 			$str = "";
-			$sql = "";
 			foreach ($arrKey as $key => $value) {
 				$str .= $value . " = :" . $value . ",";			
 			}
 
 			$str = substr($str,0,-1);
-			$sql = "";
 			$sql = "UPDATE $this->table SET {$str} WHERE id = :id";
 		}
 		$req = Database::getBdd()->prepare($sql);
